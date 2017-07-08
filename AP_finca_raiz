@@ -1,0 +1,142 @@
+-- phpMyAdmin SQL Dump
+-- version 4.6.5.2
+-- https://www.phpmyadmin.net/
+--
+-- Servidor: localhost:8889
+-- Tiempo de generación: 08-07-2017 a las 16:02:07
+-- Versión del servidor: 5.6.35
+-- Versión de PHP: 7.1.1
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
+
+--
+-- Base de datos: `apfinca_raiz`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `ap_perfil`
+--
+
+CREATE TABLE `ap_perfil` (
+  `Id` int(3) NOT NULL COMMENT 'este atributo será el identificador del perfil',
+  `nombre_perfil` int(25) NOT NULL COMMENT 'Este atributo será el nombre del perfil',
+  `activo` tinyint(2) NOT NULL DEFAULT '1' COMMENT 'Este atributo será el indicativo para reconocer sí el perfil se encuentra activo o no'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `ap_sesiones`
+--
+
+CREATE TABLE `ap_sesiones` (
+  `Id` int(3) NOT NULL COMMENT 'Este atributo será el identificador para la asociación entre el usuario y el ingreso al sistema',
+  `Usuario_Id` int(3) NOT NULL COMMENT 'Este atributo será la llave foranea que obtendrá el Id del usuario.',
+  `Sesiones` int(5) NOT NULL COMMENT 'Este atributo será el conteo de las sesiones asociadas al ingreso del usuario'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `ap_usuarios`
+--
+
+CREATE TABLE `ap_usuarios` (
+  `Id` int(3) NOT NULL COMMENT 'Este atributo será el identificativo del usuario por medio de la base de datos.',
+  `Nombres` varchar(40) NOT NULL COMMENT 'Este atributo será el nombre completo del usuario que se registró en el sistema',
+  `Apellidos` varchar(40) NOT NULL COMMENT 'Este atributo será el apellido completo del usuario que se registró en el sistema',
+  `Cedula` int(12) NOT NULL COMMENT 'Este atributo será el identificativo personal de cada usuario, con este número se realizará el inicio de sesión en el sistema.',
+  `Password` varchar(30) NOT NULL COMMENT 'Este atributo será la contraseña con la que el usuario iniciará sesión en el sistema.',
+  `Telefono` int(11) DEFAULT NULL COMMENT 'Este atributo será el número de teléfono del usuario',
+  `Correo` varchar(36) DEFAULT NULL COMMENT 'Este atributo será el correo del usuario.',
+  `Activo` tinyint(2) NOT NULL DEFAULT '1' COMMENT 'Este atributo será el indicativo para reconocer sí el usuario se encuentra activo o no'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `ap_usuario_perfil`
+--
+
+CREATE TABLE `ap_usuario_perfil` (
+  `Id` int(3) NOT NULL COMMENT 'Este atributo será el identificador de la asociación entre el usuario y perfil',
+  `Usuario_Id` int(3) NOT NULL COMMENT 'este atributo será el identificador del usuario',
+  `Perfil_Id` int(3) NOT NULL COMMENT 'Este atributo será el identificador del perfil',
+  `Activo` tinyint(2) NOT NULL DEFAULT '1' COMMENT 'Este atributo será el identificador del estado en el qe se encuentra el usuario'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Índices para tablas volcadas
+--
+
+--
+-- Indices de la tabla `ap_perfil`
+--
+ALTER TABLE `ap_perfil`
+  ADD PRIMARY KEY (`Id`);
+
+--
+-- Indices de la tabla `ap_sesiones`
+--
+ALTER TABLE `ap_sesiones`
+  ADD PRIMARY KEY (`Id`),
+  ADD KEY `AP_usuario_sesion` (`Usuario_Id`);
+
+--
+-- Indices de la tabla `ap_usuarios`
+--
+ALTER TABLE `ap_usuarios`
+  ADD PRIMARY KEY (`Id`),
+  ADD UNIQUE KEY `AP_cedula` (`Cedula`);
+
+--
+-- Indices de la tabla `ap_usuario_perfil`
+--
+ALTER TABLE `ap_usuario_perfil`
+  ADD PRIMARY KEY (`Id`),
+  ADD KEY `AP_usuario_perfil` (`Usuario_Id`),
+  ADD KEY `AP_perfil_usuario` (`Perfil_Id`);
+
+--
+-- AUTO_INCREMENT de las tablas volcadas
+--
+
+--
+-- AUTO_INCREMENT de la tabla `ap_perfil`
+--
+ALTER TABLE `ap_perfil`
+  MODIFY `Id` int(3) NOT NULL AUTO_INCREMENT COMMENT 'este atributo será el identificador del perfil';
+--
+-- AUTO_INCREMENT de la tabla `ap_sesiones`
+--
+ALTER TABLE `ap_sesiones`
+  MODIFY `Id` int(3) NOT NULL AUTO_INCREMENT COMMENT 'Este atributo será el identificador para la asociación entre el usuario y el ingreso al sistema';
+--
+-- AUTO_INCREMENT de la tabla `ap_usuarios`
+--
+ALTER TABLE `ap_usuarios`
+  MODIFY `Id` int(3) NOT NULL AUTO_INCREMENT COMMENT 'Este atributo será el identificativo del usuario por medio de la base de datos.';
+--
+-- AUTO_INCREMENT de la tabla `ap_usuario_perfil`
+--
+ALTER TABLE `ap_usuario_perfil`
+  MODIFY `Id` int(3) NOT NULL AUTO_INCREMENT COMMENT 'Este atributo será el identificador de la asociación entre el usuario y perfil';
+--
+-- Restricciones para tablas volcadas
+--
+
+--
+-- Filtros para la tabla `ap_sesiones`
+--
+ALTER TABLE `ap_sesiones`
+  ADD CONSTRAINT `AP_usuario_sesion` FOREIGN KEY (`Usuario_Id`) REFERENCES `ap_usuarios` (`Id`);
+
+--
+-- Filtros para la tabla `ap_usuario_perfil`
+--
+ALTER TABLE `ap_usuario_perfil`
+  ADD CONSTRAINT `AP_perfil_usuario` FOREIGN KEY (`Perfil_Id`) REFERENCES `ap_perfil` (`Id`),
+  ADD CONSTRAINT `AP_usuario_perfil` FOREIGN KEY (`Usuario_Id`) REFERENCES `ap_usuarios` (`Id`);
